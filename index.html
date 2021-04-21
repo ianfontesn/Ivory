@@ -13,8 +13,106 @@
             
             document.getElementById('exibir-execucao').innerHTML += '----------- Início do jogo -----------';
             document.getElementById('exibir-execucao').innerHTML += '<pre>' + campoMinado.Tabuleiro() + '</pre>';
+
+
+
             
-            // Realize sua codificação a partir deste ponto, boa sorte!
+            // Realize sua codificação a partir deste ponto, boa sorte!//gerador de matriz , a partir da string do tabuleiro
+
+
+            // gerador de matriz a partir da string recebida
+            function GerarMatriz(tabuleiro)
+            {
+            var linhas = tabuleiro.split("\r\n");
+            var colunas;
+            var matriz = [];
+
+            for(var nLinha = 0; nLinha < linhas.length; nLinha++)
+            {
+                colunas = linhas[nLinha].split("");
+                matriz.push(colunas);
+
+        }
+            return matriz;
+        }
+
+            // duas instancias de campoMinado, uma para teste/erro
+            // outra para exibição e real abertura.
+
+            var campoMinadoVitoria = new CampoMinado();
+
+            var bombaDetectadaLinha = [];
+            var bombaDetectadaColuna = [];
+            
+            var tabuleiro = GerarMatriz(campoMinado.Tabuleiro());
+            var tabuleiroVitoria = GerarMatriz(campoMinadoVitoria.Tabuleiro());
+
+
+                for (var linha = 0; linha < 9; linha++)
+                {
+                    for(var coluna = 0; coluna < 9; coluna++)
+                    {
+                        if(tabuleiro[linha][coluna] == "-")   // se for igual "-", abre a posição;
+                        {
+
+                        campoMinado.Abrir(linha+1, coluna+1);
+                        tabuleiro = GerarMatriz(campoMinado.Tabuleiro());   // gera uma nova matriz do tabuleiro
+
+                            if(tabuleiro[linha][coluna] == "*")   // se a posição aberta for bomba ("*"), 
+                            {                                     // salva a posição da bomba em vetores linha/coluna                      
+                                bombaDetectadaLinha.push(linha+1);
+
+                                bombaDetectadaColuna.push(coluna+1);
+                            }
+                            else
+                            {
+                                //caso não for bomba, abre a posição no tabuleiro do jogo. 
+                                // e gera uma nova matriz
+                                campoMinadoVitoria.Abrir(linha+1, coluna+1);
+                                tabuleiroVitoria = GerarMatriz(campoMinadoVitoria.Tabuleiro());
+
+                                if(linha == 8 && coluna == 8)   // caso for o ultimo loop, ou seja, o tabuleiro está completo.
+                                {
+                                     //cria uma variavel de exibição com a matriz final (vitória)
+                                    var exibirTabuleiroVitoria = []
+
+                                    for(var idxLinha = 0; idxLinha < tabuleiroVitoria[0].length; idxLinha++)
+                                    {
+                                        exibirTabuleiroVitoria.push(tabuleiroVitoria[idxLinha].join(' '));
+                                    }
+                                        exibirTabuleiroVitoria = exibirTabuleiroVitoria.join('\n');
+
+                                     // exibe o tabuleiro montado após vitória   
+
+                                    document.getElementById('exibir-execucao').innerHTML += '----------- Tabuleiro já resolvido-----------';
+                                    document.getElementById('exibir-execucao').innerHTML += '<pre>' + exibirTabuleiroVitoria + '</pre>';
+
+                                    // exibe posição onde as bombas foram detectadas com as verificações do tabuleiro usado para testes.
+
+                                    document.getElementById('exibir-execucao').innerHTML += '<pre> Bombas: </pre>';
+                                    for(var index = 0; index < bombaDetectadaLinha.length; index++)
+                                    {
+                                        document.getElementById('exibir-execucao').innerHTML += '<pre> Linha: ' +  
+                                        bombaDetectadaLinha[index] + ' | Coluna: ' + bombaDetectadaColuna[index] + '</pre>';
+                                    }
+
+                                    //uso de Continue apenas para não deixar vazio ou sem o else.
+                                } 
+                                else
+                                {
+                                    continue;
+                                }
+
+                            }  
+                                                   
+                        }
+                        else
+                        {
+                            continue;
+                        }    
+
+                    }
+                }
         </script>
     </body>
 </html>
